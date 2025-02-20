@@ -2,23 +2,42 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
-import QRCode from "react-qr-code";
-import { logout } from "@/store/slices/authSlice";
-import { setProfile } from "@/store/slices/userSlice";
+import dynamic from "next/dynamic";
+
+// Dynamically import QRCode with no SSR to avoid window is not defined error
+const QRCode = dynamic(() => import("react-qr-code"), {
+    ssr: false,
+});
 
 export default function UserProfile() {
     const router = useRouter();
     const dispatch = useDispatch();
+    const [mounted, setMounted] = useState(false);
     const { user, walletAddress, userType } = useSelector(
         (state) => state.auth
     );
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState({
-        name: user?.name || "",
-        bio: user?.bio || "",
-        userType: user?.userType || "",
+        name: "",
+        bio: "",
+        userType: "",
     });
     const [transactions, setTransactions] = useState([]);
+
+    // Set mounted state and initialize form data
+    useEffect(() => {
+        setMounted(true);
+        if (user) {
+            setFormData({
+                name: user.name || "",
+                bio: user.bio || "",
+                userType: user.userType || "",
+            });
+        }
+    }, [user]);
+
+    // Don't render anything until mounted
+    if (!mounted) return null;
 
     useEffect(() => {
         if (!walletAddress) {

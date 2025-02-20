@@ -1,34 +1,26 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/mongodb";
-import User from "@/models/User";
-import Product from "@/models/Product";
+import Transaction from "@/models/Transaction";
 
 export async function GET(request, { params }) {
+    if (!process.env.MONGODB_URI) {
+        return NextResponse.json(
+            { error: "Database configuration error" },
+            { status: 500 }
+        );
+    }
+
     try {
         await dbConnect();
-        const user = await User.findOne({ walletAddress: params.id });
+        const address = params.id;
 
-        if (!user) {
-            return NextResponse.json(
-                { error: "User not found" },
-                { status: 404 }
-            );
-        }
+        const transactions = await Transaction.find({
+            $or: [{ buyerAddress: address }, { sellerAddress: address }],
+        })
+            .sort({ date: -1 })
+            .populate("productId");
 
-        // For prototype, return mock transactions
-        // In production, you would fetch from blockchain/database
-        const mockTransactions = [
-            {
-                id: "1",
-                productName: "Handcrafted Vase",
-                date: new Date(),
-                price: "0.5",
-                counterpartyAddress: "0x1234...5678",
-            },
-            // Add more mock transactions as needed
-        ];
-
-        return NextResponse.json({ transactions: mockTransactions });
+        return NextResponse.json({ transactions });
     } catch (error) {
         console.error("Error fetching transactions:", error);
         return NextResponse.json(

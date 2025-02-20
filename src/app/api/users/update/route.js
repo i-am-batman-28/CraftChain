@@ -3,24 +3,38 @@ import dbConnect from "@/lib/mongodb";
 import User from "@/models/User";
 
 export async function PUT(request) {
+    if (!process.env.MONGODB_URI) {
+        return NextResponse.json(
+            { error: "Database configuration error" },
+            { status: 500 }
+        );
+    }
+
     try {
         await dbConnect();
-        const { walletAddress, name, bio, userType } = await request.json();
+        const data = await request.json();
+        const { walletAddress, name, bio, userType } = data;
 
-        const user = await User.findOneAndUpdate(
+        const updatedUser = await User.findOneAndUpdate(
             { walletAddress },
-            { name, bio, userType },
+            {
+                $set: {
+                    name,
+                    bio,
+                    userType,
+                },
+            },
             { new: true }
         );
 
-        if (!user) {
+        if (!updatedUser) {
             return NextResponse.json(
                 { error: "User not found" },
                 { status: 404 }
             );
         }
 
-        return NextResponse.json({ user });
+        return NextResponse.json({ user: updatedUser });
     } catch (error) {
         console.error("Error updating user:", error);
         return NextResponse.json(
@@ -29,4 +43,3 @@ export async function PUT(request) {
         );
     }
 }
-    
