@@ -152,17 +152,17 @@ export default function About() {
                             {
                                 name: "Karthik",
                                 role: "Technical Lead",
-                                image: "/team/karthik.jpg",
+                                image: "/karthik.jpg",
                             },
                             {
                                 name: "Aarohi",
                                 role: "Business Strategy",
-                                image: "/team/aarohi.jpg",
+                                image: "/aarohi.jpg",
                             },
                             {
                                 name: "Harshita",
                                 role: "Product Design",
-                                image: "/team/harshita.jpg",
+                                image: "/harshita.jpg",
                             },
                         ].map((member, index) => (
                             <motion.div
@@ -179,9 +179,9 @@ export default function About() {
                                     <Image
                                         src={member.image}
                                         alt={member.name}
-                                        layout="fill"
-                                        objectFit="cover"
-                                        className="rounded-full"
+                                        width={192}  // Replace layout="fill"
+                                        height={192} // Replace objectFit="cover"
+                                        className="rounded-full object-cover"
                                     />
                                 </div>
                                 <h3 className="text-xl font-bold text-[#2C3E50]">

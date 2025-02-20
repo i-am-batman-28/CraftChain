@@ -6,28 +6,43 @@ import QRCode from "react-qr-code";
 import Navbar from "@/components/Navbar";
 import Image from "next/image";
 import Footer from "@/components/Footer";
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
-    const { isAuthenticated, userType } = useSelector((state) => state.auth);
-    const [products, setProducts] = useState([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        fetchProducts();
-    }, []);
-
-    const fetchProducts = async () => {
-        try {
-            const response = await fetch("/api/products?limit=4");
-            const data = await response.json();
-            if (data.products) {
-                setProducts(data.products);
-            }
-        } catch (error) {
-            console.error("Error fetching products:", error);
-        } finally {
-            setLoading(false);
+    const router = useRouter();
+    const [products] = useState([
+        {
+            id: 1,
+            name: "Traditional Clay Pottery",
+            category: "Pottery",
+            price: "0.5",
+            imageUrl: "/pottery.jpg"
+        },
+        {
+            id: 2,
+            name: "Handwoven Pashmina Shawl",
+            category: "Textiles",
+            price: "0.8",
+            imageUrl: "/p.jpg"
+        },
+        {
+            id: 3,
+            name: "Brass Temple Bell",
+            category: "Metalwork",
+            price: "0.4",
+            imageUrl: "/b.jpg"
+        },
+        {
+            id: 4,
+            name: "Madhubani Painting",
+            category: "Art",
+            price: "1.2",
+            imageUrl: "/m.jpg"
         }
+    ]);
+
+    const handleProductClick = (id) => {
+        router.push(`/purchase/${id}`);
     };
 
     return (
@@ -68,10 +83,10 @@ export default function Home() {
                         </main>
                     </div>
                 </div>
-                <div className="lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2">
+                <div className="lg:absolute lg:inset-y-0 lg:right-4 lg:w-2/5">
                     <img
-                        className="h-56 w-full object-cover sm:h-72 md:h-96 lg:w-full lg:h-full"
-                        src="/craft-hero.jpg"
+                        className="h-52 w-full object-cover sm:h-64 md:h-80 lg:w-full lg:h-[400px] rounded-lg mt-8"
+                        src="/crft.jpg"
                         alt="Indian Crafts"
                     />
                 </div>
@@ -90,7 +105,11 @@ export default function Home() {
 
                 <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
                     {products.map((product) => (
-                        <div key={product.id} className="group relative">
+                        <div 
+                            key={product.id} 
+                            className="group relative cursor-pointer"
+                            onClick={() => handleProductClick(product.id)}
+                        >
                             <div className="relative w-full h-80 bg-white rounded-lg overflow-hidden group-hover:opacity-75 sm:aspect-w-2 sm:aspect-h-3">
                                 <img
                                     src={product.imageUrl}
@@ -101,13 +120,7 @@ export default function Home() {
                             <div className="mt-4 flex items-center justify-between space-x-8">
                                 <div>
                                     <h3 className="text-sm font-medium text-gray-900">
-                                        <Link href={`/product/${product.id}`}>
-                                            <span
-                                                aria-hidden="true"
-                                                className="absolute inset-0"
-                                            />
-                                            {product.name}
-                                        </Link>
+                                        {product.name}
                                     </h3>
                                     <p className="mt-1 text-sm text-gray-500">
                                         {product.category}
@@ -183,9 +196,9 @@ export default function Home() {
                 </div>
                 <div className="relative h-[600px] w-full">
                     <img
-                        src="/india-map.svg"
+                        src="/india-map.jpg"
                         alt="India Map"
-                        className="w-full h-full object-contain"
+                        className="w-full h-full object-contain rounded-xl"
                     />
                     {/* Add dots for major artisan locations */}
                     <div className="absolute top-1/4 left-1/4 w-3 h-3 bg-blue-600 rounded-full animate-ping"></div>

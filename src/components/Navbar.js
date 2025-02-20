@@ -16,7 +16,7 @@ export default function Navbar() {
     const dispatch = useDispatch();
 
     // Move useSelector to top level
-    const { isAuthenticated, userType, walletAddress } = useSelector(
+    const { isAuthenticated, userType, walletAddress, name } = useSelector(
         (state) => state.auth
     );
 
@@ -54,8 +54,8 @@ export default function Navbar() {
     ];
 
     return (
-        <nav className="bg-[#F5F5F1] shadow-lg sticky top-0 z-50">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <nav className="bg-white shadow-lg">
+            <div className="max-w-7xl mx-auto px-4">
                 <div className="flex justify-between h-16">
                     {/* Logo and Desktop Navigation */}
                     <div className="flex">
@@ -110,8 +110,8 @@ export default function Navbar() {
                                     className="bg-white rounded-full flex text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#8B4513] transition-all"
                                 >
                                     <span className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-[#2C3E50] bg-white hover:bg-gray-50">
-                                        {walletAddress?.slice(0, 6)}...
-                                        {walletAddress?.slice(-4)}
+                                        <span className="mr-2">Karthik</span>
+                                        {walletAddress?.slice(0, 6)}...{walletAddress?.slice(-4)}
                                     </span>
                                 </button>
                                 {isProfileDropdownOpen && (
@@ -123,16 +123,10 @@ export default function Navbar() {
                                             Profile
                                         </Link>
                                         <Link
-                                            href={
-                                                userType === "artisan"
-                                                    ? "/dashboard"
-                                                    : "/marketplace"
-                                            }
+                                            href={userType === "artisan" ? "/dashboard" : "/my-purchases"}
                                             className="block px-4 py-2 text-sm text-[#2C3E50] hover:bg-gray-100"
                                         >
-                                            {userType === "artisan"
-                                                ? "Dashboard"
-                                                : "My Purchases"}
+                                            {userType === "artisan" ? "Dashboard" : "My Purchases"}
                                         </Link>
                                         <button
                                             onClick={handleLogout}
